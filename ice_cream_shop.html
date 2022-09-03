@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+.shopFront {
+	width: 100%;
+}
+.checkout {
+	width: 25%;
+    float: left;
+}
+</style>
+</head>
+
+<body>
+
+<h1>Ice Cream Shop</h1>
+<h2>Async/Await practice</h2>
+
+<p>The shop can be either open or closed.<br>The shop has 4 checkouts working parallel.<br>Each checkout can only work on one order at time</p>
+
+
+<p id="shopStatus">The shop is OPEN</p>
+<button onclick="openClose()" id="openCloseButton">Close shop</button>
+
+<br>
+
+<div class="shopFront">
+<div class="checkout">
+<p>Checkout 1</p>
+<button id="button1" onclick="kitchen(1)">Order ice cream</button>
+<p id="checkout1"></p>
+</div>
+<div class="checkout">
+<p>Checkout 2</p>
+<button id="button2" onclick="kitchen(2)">Order ice cream</button>
+<p id="checkout2"></p>
+</div>
+<div class="checkout">
+<p>Checkout 3</p>
+<button id="button3" onclick="kitchen(3)">Order ice cream</button>
+<p id="checkout3"></p>
+</div>
+<div class="checkout">
+<p>Checkout 4</p>
+<button id="button4" onclick="kitchen(4)">Order ice cream</button>
+<p id="checkout4"></p>
+</div>
+</div>
+
+<script>
+
+let is_shop_open = true;
+
+function openClose() {
+    if (is_shop_open) {
+    document.getElementById("openCloseButton").innerHTML = "Open shop";
+    document.getElementById("shopStatus").innerHTML = "The shop is CLOSED";
+    is_shop_open = false;
+    }
+    else {
+    document.getElementById("openCloseButton").innerHTML = "Close shop";
+    document.getElementById("shopStatus").innerHTML = "The shop is OPEN";
+    is_shop_open = true;
+    }
+}
+
+function order(checkoutId, ms) {
+  return new Promise((resolve, reject) => {
+    if (is_shop_open) {
+      setTimeout(resolve, ms);
+    } else {
+      reject(document.getElementById(checkoutId).innerHTML = "Sorry, shop is closed, please come back later!");
+    }
+  });
+}
+
+function time(ms) {
+  return new Promise((resolve, reject) => {
+    setTimeout(resolve, ms);
+  });
+}
+
+async function kitchen(checkoutNum) {
+  try {
+  	var checkoutId = "checkout" + checkoutNum;
+    var buttonId = "button" + checkoutNum;
+    document.getElementById(buttonId).disabled = true;
+    
+    await order(checkoutId, 1000);
+    document.getElementById(checkoutId).innerHTML = "order placed";
+    
+    await time(1000);
+    document.getElementById(checkoutId).innerHTML = "fruit chopped";
+
+    await time(1000);
+    document.getElementById(checkoutId).innerHTML = "machine is working";
+
+    await time(3000);
+    document.getElementById(checkoutId).innerHTML = "Here is your ice cream, enjoy!";
+  } catch (error) {
+  	await time(2000);
+    document.getElementById(checkoutId).innerHTML = "customer left";
+  }	finally {
+  	await time(1000);
+    document.getElementById(checkoutId).innerHTML = "";
+  	document.getElementById(buttonId).disabled = false;
+  }
+}
+
+</script>
+
+</body>
+</html>
